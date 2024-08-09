@@ -2,7 +2,7 @@
 
 namespace Scheduler.Entities;
 
-public class Scheduler : Entity
+public class JobScheduler : Entity
 {
     public required string Name { get; set; }
     public string? Description { get; set; }
