@@ -11,11 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
-
 var connectionString = builder.Configuration.GetConnectionString("MySQLConnectionString");
 builder.Services.AddDbContext<MySQLDBContext>(
     options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
 var hangfireConnectionString = builder.Configuration.GetConnectionString("HangfireConnectionString");
 builder.Services.AddHangfire(config => config
     .UseStorage(new MySqlStorage(connectionString,
@@ -23,7 +22,9 @@ builder.Services.AddHangfire(config => config
                     {
                         TablesPrefix = "HangFire"
                     })));
+builder.Services.AddHangfireServer();
 
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -31,6 +32,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHangfireDashboard()
+    .UseHangfireServer();
+
 app.UseHttpsRedirection();
+
 
 app.Run();
