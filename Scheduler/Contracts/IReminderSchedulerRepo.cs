@@ -2,7 +2,7 @@
 
 namespace Scheduler.Contracts;
 
-public interface IReminderSchedulerRepo : IJobSchedulerRepo
+public interface IReminderSchedulerRepo : IJobSchedulerRepo<ReminderScheduler>
 {
     public Task PrintConsoleAsync(ReminderScheduler scheduler);
 }

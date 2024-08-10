@@ -3,8 +3,8 @@ using Scheduler.Enums;
 
 namespace Scheduler.Contracts;
 
-public interface IJobSchedulerRepo
+public interface IJobSchedulerRepo<T> where T : JobScheduler
 {
-    public Task<IReadOnlyList<JobScheduler>> GetListByStatusAsync(Status status);
-    public Task<JobScheduler> UpdateForLastExactionAsync(int id, bool IsSuccess = true, string? ErrorMessage = null);
+    public Task<IReadOnlyList<T>> GetListByStatusAsync(Status status);
+    public Task<T> UpdateForLastExactionAsync(int id, bool IsSuccess = true, string? ErrorMessage = null);
 }

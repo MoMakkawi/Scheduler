@@ -7,14 +7,14 @@ using Scheduler.Enums;
 
 namespace Scheduler.Repositories;
 
-public class JobSchedulerRepo(MySQLDBContext dbContext) : GenericRepo<JobScheduler>(dbContext), IJobSchedulerRepo
+public class JobSchedulerRepo<T>(MySQLDBContext dbContext) : GenericRepo<T>(dbContext), IJobSchedulerRepo<T> where T : JobScheduler
 {
-    public async Task<IReadOnlyList<JobScheduler>> GetListByStatusAsync(Status status) => await dbContext
-        .Set<JobScheduler>()
+    public async Task<IReadOnlyList<T>> GetListByStatusAsync(Status status) => await dbContext
+        .Set<T>()
         .Where(x => !x.IsDeleted && x.Status == status)
         .ToListAsync();
 
-    public async Task<JobScheduler> UpdateForLastExactionAsync(int id, bool IsSuccess = true, string? ErrorMessage = null)
+    public async Task<T> UpdateForLastExactionAsync(int id, bool IsSuccess = true, string? ErrorMessage = null)
     {
         var jobScheduler = await GetByIdAsync(id);
 

@@ -4,7 +4,7 @@ using Scheduler.Entities;
 
 namespace Scheduler.Repositories;
 
-public class ReminderSchedulerRepo(MySQLDBContext dbContext) : JobSchedulerRepo(dbContext), IReminderSchedulerRepo 
+public class ReminderSchedulerRepo(MySQLDBContext dbContext) : JobSchedulerRepo<ReminderScheduler>(dbContext), IReminderSchedulerRepo
 {
     public async Task PrintConsoleAsync(ReminderScheduler scheduler)
     {
