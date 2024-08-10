@@ -101,34 +101,34 @@ public class GenericRepo<T>(MySQLDBContext dbContext) where T : Entity
         .ToListAsync();
 
     // Get All "Deleted + UnDeleted" records tracking and no tracking.
-    public virtual IQueryable<T> GetAllNoTrackingAsync() => dbContext
+    public virtual IQueryable<T> GetAllNoTracking() => dbContext
         .Set<T>()
         .AsNoTracking()
         .OrderByDescending(x => x.CreatedAt);
-    public virtual IQueryable<T> GetAllTrackingAsync() => dbContext
+    public virtual IQueryable<T> GetAllTracking() => dbContext
         .Set<T>()
         .OrderByDescending(x => x.CreatedAt);
 
     // Get "UnDeleted" records tracking and no tracking.
-    public virtual IQueryable<T> GetUnDeletedNoTrackingAsync() => dbContext
+    public virtual IQueryable<T> GetUnDeletedNoTracking() => dbContext
         .Set<T>()
         .AsNoTracking()
         .Where(x => !x.IsDeleted)
         .OrderByDescending(x => x.CreatedAt);
 
-    public virtual IQueryable<T> GetUnDeletedTrackingAsync() => dbContext
+    public virtual IQueryable<T> GetUnDeletedTracking() => dbContext
         .Set<T>()
         .Where(x => !x.IsDeleted)
         .OrderByDescending(x => x.CreatedAt);
 
     // Get "Soft Deleted" records tracking and no tracking.
-    public virtual IQueryable<T> GetSoftDeletedNoTrackingAsync() => dbContext
+    public virtual IQueryable<T> GetSoftDeletedNoTracking() => dbContext
         .Set<T>()
         .AsNoTracking()
         .Where(x => x.IsDeleted)
         .OrderByDescending(x => x.CreatedAt);
 
-    public virtual IQueryable<T> GetSoftDeletedTrackingAsync() => dbContext
+    public virtual IQueryable<T> GetSoftDeletedTracking() => dbContext
         .Set<T>()
         .AsNoTracking()
         .Where(x => x.IsDeleted)

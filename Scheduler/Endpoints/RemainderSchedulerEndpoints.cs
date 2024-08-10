@@ -14,7 +14,7 @@ public class RemainderSchedulerEndpoints : IEndpointDefinition
     public void DefineEndpoints(IEndpointRouteBuilder app)
     {
         app.MapGet(prefix, async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo)
-            => await reminderSchedulerRepo.GetAllNoTrackingAsync().ToListAsync());
+            => await reminderSchedulerRepo.GetAllNoTracking().ToListAsync());
         app.MapGet(prefix + "/undeleted", async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo, Status status)
             => await reminderSchedulerRepo.GetListByStatusAsync(status));
         app.MapGet(prefix + "/id", async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo, int id)
@@ -36,14 +36,15 @@ public class RemainderSchedulerEndpoints : IEndpointDefinition
         {
             var reminderScheduler = new ReminderScheduler()
             {
-                Date = createCommand.Date,
                 Day = createCommand.Day,
                 DayNumber = createCommand.DayNumber,
                 Description = createCommand.Description,
                 Frequency = createCommand.Frequency,
                 Month = createCommand.Month,
                 Name = createCommand.Name,
+                Time = createCommand.Time,
                 Year = createCommand.Year,
+                
             };
             return await reminderSchedulerRepo.AddAsync(reminderScheduler);
         });
@@ -52,13 +53,13 @@ public class RemainderSchedulerEndpoints : IEndpointDefinition
         {
             var reminderScheduler = await reminderSchedulerRepo.GetByIdAsync(updateCommand.Id);
 
-            reminderScheduler.Date = updateCommand.Date;
             reminderScheduler.Day = updateCommand.Day;
             reminderScheduler.DayNumber = updateCommand.DayNumber;
             reminderScheduler.Description = updateCommand.Description;
             reminderScheduler.Frequency = updateCommand.Frequency;
             reminderScheduler.Month = updateCommand.Month;
             reminderScheduler.Name = updateCommand.Name;
+            reminderScheduler.Time = updateCommand.Time;
             reminderScheduler.Year = updateCommand.Year;
 
             return await reminderSchedulerRepo.UpdateAsync(reminderScheduler);
