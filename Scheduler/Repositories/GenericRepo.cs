@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 using Scheduler.Entities;
 using Scheduler.Data;
+using Scheduler.Contracts;
 
 namespace Scheduler.Repositories;
 
-public class GenericRepo<T>(MySQLDBContext dbContext) where T : Entity
+public class GenericRepo<T>(MySQLDBContext dbContext) : IGenericRepo<T> where T : Entity
 {
     // Add single entity or group.
     public virtual async Task<T> AddAsync(T entity)

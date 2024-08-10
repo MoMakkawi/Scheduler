@@ -27,11 +27,9 @@ builder.Services.AddHangfire(config => config
                     })));
 builder.Services.AddHangfireServer();
 
-builder.Services.AddScoped(typeof(GenericRepo<>));
-builder.Services.AddScoped(typeof(JobSchedulerRepo<>));
-builder.Services.AddScoped<ReminderSchedulerRepo>();
-builder.Services.AddScoped<IReminderSchedulerRepo, ReminderSchedulerRepo>();
+builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 builder.Services.AddScoped(typeof(IJobSchedulerRepo<>), typeof(JobSchedulerRepo<>));
+builder.Services.AddScoped<IReminderSchedulerRepo, ReminderSchedulerRepo>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
