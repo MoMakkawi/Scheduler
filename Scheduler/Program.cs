@@ -3,7 +3,9 @@ using Hangfire.MySql;
 
 using Microsoft.EntityFrameworkCore;
 
+using Scheduler.Contracts;
 using Scheduler.Data;
+using Scheduler.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,10 @@ builder.Services.AddHangfire(config => config
                         TablesPrefix = "HangFire"
                     })));
 builder.Services.AddHangfireServer();
+
+builder.Services.AddScoped(typeof(GenericRepo<>));
+builder.Services.AddScoped<IReminderSchedulerRepo, ReminderSchedulerRepo>();
+builder.Services.AddScoped<IJobSchedulerRepo, JobSchedulerRepo>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
