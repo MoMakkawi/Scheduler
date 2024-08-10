@@ -1,0 +1,14 @@
+﻿using Scheduler.Enums;
+
+namespace Scheduler.Models.ReminderSchedulerDTOs;
+
+public record CreateCommand(
+    string Name,
+    string? Description,
+    Frequency Frequency,
+    int? Year,
+    MonthOfYear? Month,
+    int? DayNumber,
+    DayOfWeek? Day,
+    DateOnly? Date,
+    Status Status = Status.OnProgress);
