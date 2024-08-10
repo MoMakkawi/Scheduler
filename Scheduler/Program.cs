@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Scheduler.Contracts;
 using Scheduler.Data;
+using Scheduler.Extensions;
 using Scheduler.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,8 +28,10 @@ builder.Services.AddHangfire(config => config
 builder.Services.AddHangfireServer();
 
 builder.Services.AddScoped(typeof(GenericRepo<>));
+builder.Services.AddScoped(typeof(JobSchedulerRepo<>));
+builder.Services.AddScoped<ReminderSchedulerRepo>();
 builder.Services.AddScoped<IReminderSchedulerRepo, ReminderSchedulerRepo>();
-builder.Services.AddScoped<IJobSchedulerRepo, JobSchedulerRepo>();
+builder.Services.AddScoped(typeof(IJobSchedulerRepo<>), typeof(JobSchedulerRepo<>));
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -43,5 +46,7 @@ app.UseHangfireDashboard()
 
 app.UseHttpsRedirection();
 
+// Register endpoints dynamically
+app.AddEndpoints();
 
 app.Run();
