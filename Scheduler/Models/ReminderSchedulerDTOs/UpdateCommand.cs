@@ -11,4 +11,4 @@ public record UpdateCommand(
     MonthOfYear? Month,
     int? DayNumber,
     DayOfWeek? Day,
-    DateOnly? Date);
+    TimeOnly? Time);

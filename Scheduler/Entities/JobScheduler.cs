@@ -14,5 +14,5 @@ public class JobScheduler : Entity
     public MonthOfYear? Month { get; set; }
     public int? DayNumber { get; set; }
     public DayOfWeek? Day { get; set; }
-    public DateOnly? Date { get; set; }
+    public TimeOnly? Time { get; set; }
 }

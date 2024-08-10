@@ -10,5 +10,5 @@ public record CreateCommand(
     MonthOfYear? Month,
     int? DayNumber,
     DayOfWeek? Day,
-    DateOnly? Date,
+    TimeOnly? Time,
     Status Status = Status.OnProgress);
