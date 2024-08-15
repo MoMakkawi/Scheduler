@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using Scheduler.Contracts;
 using Scheduler.Entities;
 using Scheduler.Enums;
 using Scheduler.Models.ReminderSchedulerDTOs;
-using Scheduler.Repositories;
 
 namespace Scheduler.Endpoints;
 
@@ -13,26 +13,26 @@ public class RemainderSchedulerEndpoints : IEndpointDefinition
     public string prefix = "scheduler/remainder";
     public void DefineEndpoints(IEndpointRouteBuilder app)
     {
-        app.MapGet(prefix, async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo)
+        app.MapGet(prefix, async ([FromServices] IReminderSchedulerRepo reminderSchedulerRepo)
             => await reminderSchedulerRepo.GetAllNoTracking().ToListAsync());
-        app.MapGet(prefix + "/undeleted", async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo, Status status)
+        app.MapGet(prefix + "/undeleted", async ([FromServices] IReminderSchedulerRepo reminderSchedulerRepo, Status status)
             => await reminderSchedulerRepo.GetListByStatusAsync(status));
-        app.MapGet(prefix + "/id", async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo, int id)
+        app.MapGet(prefix + "/id", async ([FromServices] IReminderSchedulerRepo reminderSchedulerRepo, int id)
             => await reminderSchedulerRepo.GetByIdAsync(id));
 
-        app.MapDelete(prefix, async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo, int id) =>
+        app.MapDelete(prefix, async ([FromServices] IReminderSchedulerRepo reminderSchedulerRepo, int id) =>
         {
             var reminderScheduler = await reminderSchedulerRepo.GetByIdAsync(id);
             await reminderSchedulerRepo.SoftDeleteAsync(reminderScheduler);
         });
 
-        app.MapPatch(prefix + "/un-delete", async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo, int id) =>
+        app.MapPatch(prefix + "/un-delete", async ([FromServices] IReminderSchedulerRepo reminderSchedulerRepo, int id) =>
         {
             var reminderScheduler = await reminderSchedulerRepo.GetByIdAsync(id);
             await reminderSchedulerRepo.UnSoftDeleteAsync(reminderScheduler);
         });
 
-        app.MapPost(prefix, async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo, CreateCommand createCommand) =>
+        app.MapPost(prefix, async ([FromServices] IReminderSchedulerRepo reminderSchedulerRepo, CreateCommand createCommand) =>
         {
             var reminderScheduler = new ReminderScheduler()
             {
@@ -49,7 +49,7 @@ public class RemainderSchedulerEndpoints : IEndpointDefinition
             return await reminderSchedulerRepo.AddAsync(reminderScheduler);
         });
 
-        app.MapPut(prefix, async ([FromServices] ReminderSchedulerRepo reminderSchedulerRepo, UpdateCommand updateCommand) =>
+        app.MapPut(prefix, async ([FromServices] IReminderSchedulerRepo reminderSchedulerRepo, UpdateCommand updateCommand) =>
         {
             var reminderScheduler = await reminderSchedulerRepo.GetByIdAsync(updateCommand.Id);
 
