@@ -2,7 +2,7 @@
 
 public enum Status : byte
 {
-    OnProgress,
+    InProgress,
     Success,
     Failed
 }
