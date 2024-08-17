@@ -11,4 +11,4 @@ public record CreateCommand(
     int? DayNumber,
     DayOfWeek? Day,
     TimeOnly? Time,
-    Status Status = Status.OnProgress);
+    Status Status = Status.New);

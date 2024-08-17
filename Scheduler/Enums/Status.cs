@@ -2,6 +2,7 @@
 
 public enum Status : byte
 {
+    New = 0,
     InProgress,
     Success,
     Failed
