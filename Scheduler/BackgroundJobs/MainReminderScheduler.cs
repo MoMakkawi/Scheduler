@@ -12,62 +12,52 @@ public class MainReminderScheduler(IReminderSchedulerRepo reminderSchedulerRepo)
 {
     public async Task ExecuteReminderSchedulers()
     {
-        var reminderSchedulers = GetValidReminderSchedulers();
-        foreach (var reminder in reminderSchedulers)
+        foreach (var reminder in GetValidReminderSchedulers())
         {
-            
-            Console.WriteLine();
+            Console.WriteLine($"________Start reminder schedulers: {reminder.Id} ___________");
+            await TryExecuteReminderSchedulersAsync(reminder);
+            Console.WriteLine($"________End reminder schedulers: {reminder.Id} ___________");
         }
     }
     private async Task TryExecuteReminderSchedulersAsync(ReminderScheduler reminderScheduler)
     {
         try
         {
-            reminderSchedulerRepo.UpdateForLastExactionAsync()
+            // make Reminder Scheduler inProgress status
+            // execute now
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-
-            throw;
+            // make Reminder Scheduler Failed status
+            // print "ex.Message" error message
         }
     }
     private async Task ExecuteReminderSchedulersAsync(ReminderScheduler reminderScheduler)
     {
-        try
-        {
-
-        }
-        catch (Exception)
-        {
-
-            throw;
-        }
+        // do some thing for remaindering...
     }
 
     private IQueryable<ReminderScheduler> GetValidReminderSchedulers()
     {
-        #region Base predicates
+        // Define individual predicates
+        var notExecutedPredicate = PredicateBuilder.New<ReminderScheduler>(true)
+            .And(IsNotExecutedAtAll)
+            .Or(IsNotExecutedToday);
 
-        var basePredicate = PredicateBuilder.New<ReminderScheduler>(true)
-             .And(IsNotExecutedAtAll)
-             .Or(IsNotExecutedToday);
-        #endregion
-
-        #region Combine all frequency-specific predicates
-
-        var frequencyPredicate = PredicateBuilder.New<ReminderScheduler>(true)
+        var frequencyAndTimePredicate = PredicateBuilder.New<ReminderScheduler>(true)
             .And(IsValidForFrequencyExecution)
-            .And(IsValidTimeForExecution)
+            .And(IsValidTimeForExecution);
 
+        var executionPredicate = PredicateBuilder.New<ReminderScheduler>(true)
             .And(IsValidForDailyExecution)
-            .Or(IsValidForWeeklyExecution)
+            .Or(IsValidDayOfMonthForExecution
+                .And(IsValidForWeeklyExecution
+                .Or(IsValidForYearlyExecution)));
 
-            .Or(IsValidForMonthlyExecution.And(IsValidDayOfMonthForExecution))
-            .Or(IsValidForYearlyExecution.And(IsValidDayOfMonthForExecution));
-        #endregion
-
-        // Combine base and frequency predicates
-        var predicate = basePredicate.And(frequencyPredicate);
+        // Combine all the predicates
+        var predicate = notExecutedPredicate
+            .And(frequencyAndTimePredicate)
+            .And(executionPredicate);
 
         return reminderSchedulerRepo
             .GetUnDeletedNoTracking()
