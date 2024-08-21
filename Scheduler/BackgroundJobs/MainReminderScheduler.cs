@@ -8,34 +8,36 @@ using Scheduler.Enums;
 
 namespace Scheduler.BackgroundJobs;
 
-public class MainReminderScheduler(IReminderSchedulerRepo reminderSchedulerRepo)
+public class MainReminderScheduler(
+    IReminderSchedulerRepo reminderSchedulerRepo,
+    INotificationService notificationService,
+    ILogger<ReminderScheduler> logger)
 {
     public async Task ExecuteReminderSchedulers()
     {
         foreach (var reminder in GetValidReminderSchedulers())
         {
-            Console.WriteLine($"________Start reminder schedulers: {reminder.Id} ___________");
+            logger.LogInformation($"Start reminder schedulers: {reminder.Id}");
             await TryExecuteReminderSchedulersAsync(reminder);
-            Console.WriteLine($"________End reminder schedulers: {reminder.Id} ___________");
+            logger.LogInformation($"End reminder schedulers: {reminder.Id}");
         }
     }
     private async Task TryExecuteReminderSchedulersAsync(ReminderScheduler reminderScheduler)
     {
         try
         {
-            // make Reminder Scheduler inProgress status
-            // execute now
+            await reminderSchedulerRepo.UpdateStatusBasedAsync(reminderScheduler.Id, Status.InProgress);
+            await ExecuteReminderSchedulersAsync(reminderScheduler);
         }
         catch (Exception ex)
         {
-            // make Reminder Scheduler Failed status
-            // print "ex.Message" error message
+            await reminderSchedulerRepo.UpdateStatusBasedAsync(reminderScheduler.Id, Status.Failed, ex.Message);
+            logger.LogError(ex, "Error in TryExecuteReminderSchedulersAsync");
         }
     }
+
     private async Task ExecuteReminderSchedulersAsync(ReminderScheduler reminderScheduler)
-    {
-        // do some thing for remaindering...
-    }
+        => await notificationService.SendNotificationMessageAsync(reminderScheduler);
 
     private IQueryable<ReminderScheduler> GetValidReminderSchedulers()
     {
