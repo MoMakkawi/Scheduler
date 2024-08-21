@@ -7,26 +7,34 @@ using Scheduler.Enums;
 
 namespace Scheduler.Repositories;
 
-public class JobSchedulerRepo<T>(MySQLDBContext dbContext) : GenericRepo<T>(dbContext), IJobSchedulerRepo<T> where T : JobScheduler
+public class JobSchedulerRepo<Scheduler>(MySQLDBContext dbContext) : GenericRepo<Scheduler>(dbContext), IJobSchedulerRepo<Scheduler> where Scheduler : JobScheduler
 {
-    public async Task<IReadOnlyList<T>> GetListByStatusAsync(Status status) => await dbContext
-        .Set<T>()
+    public async Task<IReadOnlyList<Scheduler>> GetListByStatusAsync(Status status) => await dbContext
+        .Set<Scheduler>()
         .Where(x => !x.IsDeleted && x.Status == status)
         .ToListAsync();
 
-    public async Task<T> UpdateForLastExactionAsync(int id, bool IsSuccess = true, string? ErrorMessage = null)
+    public async Task<Scheduler> UpdateStatusBasedAsync(int id, Status status, string? errorMessage = null)
     {
         var jobScheduler = await GetByIdAsync(id);
 
-        if (IsSuccess) 
+        jobScheduler.Status = status;
+
+        switch (status)
         {
-            jobScheduler.Status = Status.Success;
-            jobScheduler.ExecutedAt = DateTime.UtcNow;
-        }
-        else
-        {
-            jobScheduler.Status = Status.Failed;
-            jobScheduler.ErrorMessage = ErrorMessage!;
+            case Status.InProgress: break; 
+            case Status.Success:
+                {
+                    jobScheduler.ExecutedAt = DateTime.UtcNow;
+                    break;
+                }
+            case Status.Failed:
+                {
+                    jobScheduler.ErrorMessage = errorMessage!;
+                    break;
+                }
+            case Status.New: throw new ArgumentException("Scheduler will be new only when you create it.");
+            default: throw new NotImplementedException($"There no Update Job Scheduler implementation for {status.ToString()}");
         }
 
         return await UpdateAsync(jobScheduler);
