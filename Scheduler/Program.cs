@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Scheduler.Contracts;
 using Scheduler.Data;
 using Scheduler.Extensions;
+using Scheduler.Middleware;
 using Scheduler.Repositories;
 using Scheduler.Services;
 
@@ -39,6 +40,9 @@ builder.Services.AddScoped<IReminderSchedulerRepo, ReminderSchedulerRepo>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
