@@ -7,12 +7,18 @@ using Scheduler.Contracts;
 using Scheduler.Data;
 using Scheduler.Extensions;
 using Scheduler.Repositories;
+using Scheduler.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddLogging();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 var connectionString = builder.Configuration.GetConnectionString("MySQLConnectionString");
 builder.Services.AddDbContext<MySQLDBContext>(
@@ -30,6 +36,7 @@ builder.Services.AddHangfireServer();
 builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 builder.Services.AddScoped(typeof(IJobSchedulerRepo<>), typeof(JobSchedulerRepo<>));
 builder.Services.AddScoped<IReminderSchedulerRepo, ReminderSchedulerRepo>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
